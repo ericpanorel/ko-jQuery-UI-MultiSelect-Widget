@@ -1,4 +1,4 @@
-// ko-multi-wrapper.js
+﻿// ko-multi-wrapper.js
 // Copyright (c) 2012, Eric Panorel
 // License: MIT (http://www.opensource.org/licenses/mit-license.php)
 //
@@ -49,26 +49,41 @@
             allBindingsAccessor().optionsCaption = '';
 
             ko.bindingHandlers.options.update(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
-          
+
             // get what are the selected checkboxes
             var array_of_checked_values = $(element).multiselect("getChecked").map(function () {
                 return this.title;
             }).get();
 
             var selOptionsBinding = allBindingsAccessor().selectedOptions;
-            var propertyToCompare = ko.utils.unwrapObservable(allBindingsAccessor().optionsText) || undefined;
+            var optionsText = ko.utils.unwrapObservable(allBindingsAccessor().optionsText);
+
+            var optionsTextIsFunction = typeof optionsText === 'function';
+
+            var propertyToCompare = optionsText ? optionsText : undefined;
+
             var selectedOptions = [];
 
             ko.utils.arrayForEach(array_of_checked_values, function (title) {
                 ko.utils.arrayForEach(selectOptions, function (item) {
                     if (typeof (propertyToCompare) != 'undefined') {
-                        if (item[propertyToCompare] == title) {
-                            selectedOptions.push(item);
+                        if (typeof optionsText === 'function') {
+                           
+                            if (optionsText(item) == title) {
+                                selectedOptions.push(item);
+                            }
+                        } else {
+
+                            if (item[propertyToCompare] == title) {
+                                selectedOptions.push(item);
+                            }
                         }
-                    } else {
+                    }
+                    else {
                         if (item == title) {
                             selectedOptions.push(item);
                         }
+
                     }
 
                 });
