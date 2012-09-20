@@ -50,52 +50,6 @@
 
             ko.bindingHandlers.options.update(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
 
-            // get what are the selected checkboxes
-            var array_of_checked_values = $(element).multiselect("getChecked").map(function () {
-                return this.title;
-            }).get();
-
-            var selOptionsBinding = allBindingsAccessor().selectedOptions;
-            var optionsText = ko.utils.unwrapObservable(allBindingsAccessor().optionsText);
-
-            var optionsTextIsFunction = typeof optionsText === 'function';
-
-            var propertyToCompare = optionsText ? optionsText : undefined;
-
-            var selectedOptions = [];
-
-            ko.utils.arrayForEach(array_of_checked_values, function (title) {
-                ko.utils.arrayForEach(selectOptions, function (item) {
-                    if (typeof (propertyToCompare) != 'undefined') {
-                        if (typeof optionsText === 'function') {
-                           
-                            if (optionsText(item) == title) {
-                                selectedOptions.push(item);
-                            }
-                        } else {
-
-                            if (item[propertyToCompare] == title) {
-                                selectedOptions.push(item);
-                            }
-                        }
-                    }
-                    else {
-                        if (item == title) {
-                            selectedOptions.push(item);
-                        }
-
-                    }
-
-                });
-            });
-
-            // override the ko binding with these results
-            if (ko.isObservable(selOptionsBinding)) {
-                selOptionsBinding(selectedOptions);
-            } else {
-                selOptionsBinding = selectedOptions;
-            }
-
             setTimeout(function () {
                 $(element).multiselect("refresh");
             }, 0);
